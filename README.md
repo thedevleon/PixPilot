@@ -12,6 +12,10 @@ Support for Arducopter will be added once they have implemented [the relevant PR
 
 Thanks to ilihack, SockEye, Richardoe, Schicksie, lichtl, ben_&Jace25, Clooney82&fnoopdogg for their previous work.
 
+# Documentation 
+
+The documentation can be [found here](https://thedevleon.gitbooks.io/pixpilot/content/). 
+
 
 ##Useful links
 1. https://github.com/PX4/Firmware/pull/4349
