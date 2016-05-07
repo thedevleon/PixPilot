@@ -1,5 +1,7 @@
 # Introduction
 
+[![Join the chat at https://gitter.im/thedevleon/PixPilot](https://badges.gitter.im/thedevleon/PixPilot.svg)](https://gitter.im/thedevleon/PixPilot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 PixPilot is a library and collection of telemetry screens for radios running OpenTX >=2.2.
 
 PixPilot comes as a package of telemetry screens and adapters.
