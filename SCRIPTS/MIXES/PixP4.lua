@@ -382,6 +382,10 @@ end
 
 --TODO add mission_seq_status functions
 
+function pix_get_mavlink_messages()
+    return mavlink_messages
+end
+
 function pix_say_flight_mode()
     --TODO implement
 end
