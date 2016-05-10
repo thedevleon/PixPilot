@@ -153,6 +153,9 @@ local function update_pix_telemetry()
         gps_fix =  value % 10
         gps_sat =   (value -  (value % 10)) * 0.1
 
+    elseif dataId == arming_stateId then
+        arming_state = value
+
     elseif dataId == rollId then
         roll = value / 100000.0
 
@@ -333,9 +336,54 @@ function pix_get_flightmode()
 end
 
 
-function pix_say_flight_mode()
+function pix_get_gps_fix()
+    return gps_fix
 end
 
+function pix_get_gps_sat()
+    return gps_sat
+end
 
+function pix_get_arming_state()
+        if arming_state == 0  then return "Init"
+    elseif arming_state == 1  then return "Standby"
+    elseif arming_state == 2  then return "Armed"
+    elseif arming_state == 3  then return "Armed Error"
+    elseif arming_state == 4  then return "Standby Error"
+    elseif arming_state == 5  then return "Reboot"
+    elseif arming_state == 6  then return "In Air Restore"
+    elseif arming_state == 7  then return "Max"
+    end
+end
+
+function pix_get_roll()
+    return roll
+end
+
+function pix_get_pitch()
+    return pitch
+end
+
+function pix_get_yaw()
+    return yaw
+end
+
+function pix_get_mission_count()
+    return mission_count
+end
+
+function pix_get_mission_seq_reached()
+    return mission_seq_reached
+end
+
+function pix_get_mission_seq_current()
+    return mission_seq_current
+end
+
+--TODO add mission_seq_status functions
+
+function pix_say_flight_mode()
+    --TODO implement
+end
 
 return { run=run, init=init }
