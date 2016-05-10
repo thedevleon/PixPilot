@@ -47,8 +47,7 @@ local accZ
 local current
 local vfas
 local cells
-local gps_lon
-local gps_lat
+local gps_lon_lat
 local gps_alt
 local gps_spd
 local gps_crs
@@ -65,40 +64,49 @@ local yaw
 local mission_count
 local mission_seq_reached
 local mission_seq_current
-local mission_seq_status
+local mission_seq_status_valid
+local mission_seq_status_warning
+local mission_seq_status_reached
+local mission_seq_status_finished
+local mission_seq_status_stay_in_failsafe
+local mission_seq_status_flight_termination
+local mission_seq_status_item_do_jump_changed
+local mission_seq_status_failure
 
---mavlink message related --
+
+
+-- mavlink message related --
 local mavlink_messages = { }
 local mavlink_last_message = ""
 local mavlink_message_buffer = ""
 local mavlink_message_done = false
 
---ids --
-local fuelId
-local altId
-local varioId
-local accXId
-local accYId
-local accZId
-local currentId
-local vfasId
-local cellsId
-local gps_lonId
-local gps_latId
-local gps_altId
-local gps_spdId
-local gps_crsId
-local gps_timeId
-local nav_stateId
-local gps_fix_satId
-local arming_stateId
-local rollId
-local pitchId
-local yawId
-local mission_countId
-local mission_seq_reachedId
-local mission_seq_currentId
-local mission_seq_statusId
+-- ids --
+local fuelId = 1536
+local altId = 256
+local varioId = 272
+local accXId = 1792
+local accYId = 1808
+local accZId = 1824
+local currentId = 512
+local vfasId = 528
+local cellsId = 768
+local gps_lon_latId = 2048
+local gps_spdId = 2096
+local gps_crsId = 2112
+local gps_timeId = 2128
+
+-- PX4 specific--
+local nav_stateId = 20608
+local gps_fix_satId = 20609
+local arming_stateId = 20610
+local rollId = 20611
+local pitchId = 20612
+local yawId = 20613
+local mission_countId = 20614
+local mission_seq_reachedId = 20615
+local mission_seq_currentId = 20616
+local mission_seq_statusId = 20617
 local mavlink_messageId = 20618
 
 -- local functions --
@@ -118,10 +126,56 @@ here, since mixer scripts are limited to 30 milliseconds execution time
 ]]--
 local function update_pix_telemetry()
 
+    -- normal id parsing --
+
+    fuel = getValue(fuelId)
+    alt = getValue(altId)
+    vario = getValue(varioId)
+    accX = getValue(accXId)
+    accY = getValue(accYId)
+    accZ = getValue(accZId)
+    current = getValue(currentId)
+    vfas = getValue(vfasId)
+    cells = getValue(cellsId)
+    gps_lon_lat = getValue(gps_lon_latId)
+    gps_alt = getValue(gps_altId)
+    gps_spd = getValue(gps_spdId)
+    gps_crs = getValue(gps_crsId)
+    gps_time = getValue(gps_timeId)
+
     -- mavlink message parsing --
     local physicalId, primId, dataId, value = telemetryPop()
 
-    if dataId == mavlink_messageId then
+    if dataId == nav_stateId then
+        nav_state = value
+
+    elseif dataId == gps_fix_satId then
+        gps_fix =  value % 10
+        gps_sat =   (value -  (value % 10)) * 0.1
+
+    elseif dataId == rollId then
+        roll = value / 100000.0
+
+    elseif dataId == pitchId then
+        pitch = value / 100000.0
+
+    elseif dataId == yawId then
+        yaw = value / 100000.0
+
+    elseif dataid == mission_countId then
+        mission_countId = value
+
+    elseif dataId == mission_seq_reachedId then
+        mission_seq_reached = value
+
+    elseif dataId == mission_seq_currentId then
+        mission_seq_current = value
+
+    elseif dataId == mission_seq_statusId then
+        --TODO mission bitflags
+
+
+    elseif dataId == mavlink_messageId then
         local byte1 = 0
         local byte2 = 0
         local byte3 = 0
