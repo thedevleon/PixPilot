@@ -174,7 +174,6 @@ local function update_pix_telemetry()
     elseif dataId == mission_seq_statusId then
         --TODO mission bitflags
 
-
     elseif dataId == mavlink_messageId then
         local byte1 = 0
         local byte2 = 0
@@ -256,9 +255,85 @@ end
 
 -- global functions --
 
+function pix_get_controller_name()
+    return controller
+end
+
+function pix_get_alt()
+    return alt
+end
+
+function pix_get_vario()
+    return vario
+end
+
+function pix_get_accX()
+    return accX
+end
+
+function pix_get_accY()
+    return accY
+end
+
+function pix_get_current()
+    return current
+end
+
+function pix_get_vfas()
+    return vfas
+end
+
+function pix_get_cells()
+    return cells
+end
+
+function pix_get_gps_lon_lan()
+    return gps_lon_lat
+end
+
+function pix_get_gps_alt()
+    return gps_alt
+end
+
+function pix_get_gps_spd()
+    return gps_spd
+end
+
+function pix_get_gps_crs()
+    return gps_crs
+end
+
+function pix_get_gps_time()
+    return gps_time
+end
+
+function pix_get_flightmode()
+        if nav_state == 0  then return "Manual"
+    elseif nav_state == 1  then return "Altitude Control"
+    elseif nav_state == 2  then return "Position Control"
+    elseif nav_state == 3  then return "Mission"
+    elseif nav_state == 4  then return "Loiter"
+    elseif nav_state == 5  then return "RTL"
+    elseif nav_state == 6  then return "RC Recover"
+    elseif nav_state == 7  then return "RTGS - Link Loss"
+    elseif nav_state == 8  then return "Land - Engine Fail"
+    elseif nav_state == 9  then return "Land - GPS Fail"
+    elseif nav_state == 10 then return "Acro"
+    elseif nav_state == 11 then return "Unused"
+    elseif nav_state == 12 then return "Descend"
+    elseif nav_state == 13 then return "Termination"
+    elseif nav_state == 14 then return "Offboard"
+    elseif nav_state == 15 then return "Stabilized"
+    elseif nav_state == 16 then return "RAttitude"
+    elseif nav_state == 17 then return "Takeoff"
+    elseif nav_state == 18 then return "Land"
+    elseif nav_state == 19 then return "Auto Follow"
+    elseif nav_state == 10 then return "Max"
+    end
+end
+
 
 function pix_say_flight_mode()
-
 end
 
 
