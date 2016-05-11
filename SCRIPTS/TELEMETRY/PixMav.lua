@@ -30,7 +30,9 @@ local function run(key_event)
     local n = 0
 
     for k,v in pairs(mavlink_messages) do
-        lcd.drawText (1, 1+8*n , v, 0)
+        if (v ~= mavlink_messages.first and v ~= mavlink_messages.last) then
+            lcd.drawText (1, 1+8*n , v, 0)
+        end
         n=n+1
     end
 end
