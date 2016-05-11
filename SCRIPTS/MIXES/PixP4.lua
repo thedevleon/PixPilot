@@ -121,12 +121,12 @@ local function run()
     update_pix_telemetry()
 end
 
-function init_global()
+function pix_init()
     mavlink_messages_init()
     pix_adapter_running = true
 end
 
-function run_global()
+function pix_run()
     update_pix_telemetry()
 end
 
@@ -136,7 +136,7 @@ end
 
 function mavlink_messages_push(value)
     --only keep the last 8 messages
-    if math.abs(mavlink_messages.first - mavlink_messages.last) >= 8 then mavlink_messages_pop() end
+    if mavlink_messages.last - mavlink_messages.first >= 8 then mavlink_messages_pop() end
     local first = mavlink_messages.first - 1
     mavlink_messages.first = first
     mavlink_messages[first] = value
@@ -144,11 +144,9 @@ end
 
 function mavlink_messages_pop()
     local last = mavlink_messages.last
-    if mavlink_messages.first > last then return nil end
-    local value = mavlink_messages[last]
+    if mavlink_messages.first > last then return end
     mavlink_messages[last] = nil
     mavlink_messages.last = last - 1
-    return value
 end
 
 --[[
@@ -262,6 +260,7 @@ function update_pix_telemetry()
 
         if(mavlink_message_done) then
             mavlink_messages_push(mavlink_last_message)
+            mavlink_message_done = false
         end
     end
 end

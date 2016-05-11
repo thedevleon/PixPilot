@@ -5,18 +5,22 @@ PixPilot Mavlink Messages Screen
 ]]--
 
 local function init()
+    dofile("/SCRIPTS/MIXES/PixP4.lua")
+    pix_init()
     return
 end
 
 local function background()
+    pix_run()
     return
 end
 
 local function run(key_event)
     background()
 
+    lcd.clear()
+
     if pix_adapter_running == nil or pix_adapter_running == false then
-        lcd.clear()
         lcd.drawText (0, 10, "PixPilot has not been set up correctly!", 0)
         lcd.drawText (0, 20, "Please refer to the documentation to", 0)
         lcd.drawText (0, 30, "install the correct mixer script")
