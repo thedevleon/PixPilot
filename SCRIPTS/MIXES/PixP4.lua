@@ -92,6 +92,7 @@ local currentId = 512
 local vfasId = 528
 local cellsId = 768
 local gps_lon_latId = 2048
+local gps_altId = 2080
 local gps_spdId = 2096
 local gps_crsId = 2112
 local gps_timeId = 2128
@@ -112,7 +113,7 @@ local mavlink_messageId = 20618
 -- local functions --
 
 local function init()
-    mavlink_messages = mavlink_messages.init()
+    mavlink_messages_init()
     pix_adapter_running = true
 end
 
@@ -120,11 +121,41 @@ local function run()
     update_pix_telemetry()
 end
 
+function init_global()
+    mavlink_messages_init()
+    pix_adapter_running = true
+end
+
+function run_global()
+    update_pix_telemetry()
+end
+
+function mavlink_messages_init()
+    mavlink_messages = {first = 0, last = -1}
+end
+
+function mavlink_messages_push(value)
+    --only keep the last 8 messages
+    if math.abs(mavlink_messages.first - mavlink_messages.last) >= 8 then mavlink_messages_pop() end
+    local first = mavlink_messages.first - 1
+    mavlink_messages.first = first
+    mavlink_messages[first] = value
+end
+
+function mavlink_messages_pop()
+    local last = mavlink_messages.last
+    if mavlink_messages.first > last then return nil end
+    local value = mavlink_messages[last]
+    mavlink_messages[last] = nil
+    mavlink_messages.last = last - 1
+    return value
+end
+
 --[[
 this function might need to be called from the telemetry script instead of
 here, since mixer scripts are limited to 30 milliseconds execution time
 ]]--
-local function update_pix_telemetry()
+function update_pix_telemetry()
 
     -- normal id parsing --
 
@@ -190,71 +221,51 @@ local function update_pix_telemetry()
 
 
         if(byte1 == 0x02) then
-            messagedone = false;
+            mavlink_message_done = false;
         elseif(byte1 == 0x03) then
-            messagedone = true
-            lastmessage = messagebuffer
-            messagebuffer = ""
+            mavlink_message_done = true
+            mavlink_last_message = mavlink_message_buffer
+            mavlink_message_buffer = ""
         elseif(byte1 >= 20) then
-            messagebuffer = messagebuffer..string.char(byte1)
+            mavlink_message_buffer = mavlink_message_buffer..string.char(byte1)
         end
 
         if(byte2 == 0x02) then
-            messagedone = false;
+            mavlink_message_done = false;
         elseif(byte2 == 0x03) then
-            messagedone = true
-            lastmessage = messagebuffer
-            messagebuffer = ""
+            mavlink_message_done = true
+            mavlink_last_message = mavlink_message_buffer
+            mavlink_message_buffer = ""
         elseif(byte2 >= 20) then
-            messagebuffer = messagebuffer..string.char(byte2)
+            mavlink_message_buffer = mavlink_message_buffer..string.char(byte2)
         end
 
         if(byte3 == 0x02) then
-            messagedone = false;
+            mavlink_message_done = false;
         elseif(byte3 == 0x03) then
-            messagedone = true
-            lastmessage = messagebuffer
-            messagebuffer = ""
+            mavlink_message_done = true
+            mavlink_last_message = mavlink_message_buffer
+            mavlink_message_buffer = ""
         elseif(byte3 >= 20) then
-            messagebuffer = messagebuffer..string.char(byte3)
+            mavlink_message_buffer = mavlink_message_buffer..string.char(byte3)
         end
 
         if(byte4 == 0x02) then
-            messagedone = false;
+            mavlink_message_done = false;
         elseif(byte4 == 0x03) then
-            messagedone = true
-            lastmessage = messagebuffer
-            messagebuffer = ""
+            mavlink_message_done = true
+            mavlink_last_message = mavlink_message_buffer
+            mavlink_message_buffer = ""
         elseif(byte4 >= 20) then
-            messagebuffer = messagebuffer..string.char(byte4)
+            mavlink_message_buffer = mavlink_message_buffer..string.char(byte4)
         end
 
-        if(messagedone) then
-            mavlink_messages.push(mavlink_messages, messagebuffer)
+        if(mavlink_message_done) then
+            mavlink_messages_push(mavlink_last_message)
         end
     end
 end
 
-function mavlink_messages.init()
-    return {first = 0, last = -1}
-end
-
-function mavlink_messages.push(list, value)
-    --only keep the last 8 messages
-    if math.abs(list.first - list.last) >= 8 then list.pop(list) end
-    local first = list.first - 1
-    list.first = first
-    list[first] = value
-end
-
-function mavlink_messages.pop(list)
-  local last = list.last
-  if list.first > last then return nil end
-  local value = list[last]
-  list[last] = nil
-  list.last = last - 1
-  return value
-end
 
 -- global functions --
 
