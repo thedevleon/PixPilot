@@ -5,13 +5,10 @@ PixPilot Mavlink Messages Screen
 ]]--
 
 local function init()
-    dofile("/SCRIPTS/MIXES/PixP4.lua")
-    pix_init()
     return
 end
 
 local function background()
-    pix_run()
     return
 end
 
