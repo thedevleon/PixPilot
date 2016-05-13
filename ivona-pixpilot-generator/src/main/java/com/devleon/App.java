@@ -35,7 +35,7 @@ public class App {
 
         init();
 
-        String outputFileName = args[1];
+        String outputFileName = "../SCRIPTS/WAV/PixPilot/" + args[1];
         String outputFileNameMp3 = args[1].replace("wav", "mp3");
         CreateSpeechRequest createSpeechRequest = new CreateSpeechRequest();
         Input input = new Input();
