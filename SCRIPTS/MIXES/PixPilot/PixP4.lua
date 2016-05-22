@@ -341,7 +341,7 @@ function pix_get_flightmode()
     elseif nav_state == 17 then return "Takeoff"
     elseif nav_state == 18 then return "Land"
     elseif nav_state == 19 then return "Auto Follow"
-    elseif nav_state == 10 then return "Max"
+    elseif nav_state == 20 then return "Max"
     end
 end
 
